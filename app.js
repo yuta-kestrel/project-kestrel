@@ -1,3 +1,20 @@
+// ===== グリッド設定 =====
+
+// グリッド間隔（秒）
+const GRID_INTERVAL_SECONDS = 20;
+
+// 度へ変換
+const GRID_INTERVAL = GRID_INTERVAL_SECONDS / 3600;
+
+// 基準（小松空港滑走路中心）
+const GRID_CENTER = {
+    lat: 36.3948,
+    lng: 136.4076
+};
+
+// 中心マス
+const CENTER_ROW = "C";
+const CENTER_COL = 3;
 // グリッド基準（小松空港 滑走路中心）
 const GRID_ORIGIN = {
     lat: 36.3948,
