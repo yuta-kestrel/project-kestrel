@@ -74,3 +74,16 @@ drawGrid();
 
 // 地図を動かしたら描き直す
 map.on("moveend", drawGrid);
+
+// 長押しイベント
+map.on("contextmenu", function (e) {
+
+    const lat = e.latlng.lat;
+    const lng = e.latlng.lng;
+
+    document.getElementById("info").innerHTML =
+        "<b>Project Kestrel</b><br>" +
+        "Latitude : " + lat.toFixed(6) + "<br>" +
+        "Longitude : " + lng.toFixed(6);
+
+});
