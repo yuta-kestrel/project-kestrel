@@ -1,5 +1,110 @@
-// 選択中のマス
+// ======================================
+// Project Kestrel
+// Ver.0.7
+// ======================================
+
+// ===== グリッド設定 =====
+
+// グリッド間隔（秒）
+const GRID_INTERVAL_SECONDS = 20;
+
+// 度へ変換
+const GRID_INTERVAL = GRID_INTERVAL_SECONDS / 3600;
+
+// 小松空港滑走路中心（仮）
+const GRID_CENTER = {
+    lat: 36.3948,
+    lng: 136.4076
+};
+
+// 中心マス
+const CENTER_ROW = "C";
+const CENTER_COL = 3;
+
+// 選択中グリッド
 let selectedGrid = null;
+
+// ===== 地図 =====
+
+const map = L.map("map").setView(
+    [GRID_CENTER.lat, GRID_CENTER.lng],
+    14
+);
+
+// 国土地理院
+L.tileLayer(
+    "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+    {
+        attribution: "© 国土地理院",
+        maxZoom: 18
+    }
+).addTo(map);
+
+// グリッドレイヤー
+const gridLayer = L.layerGroup().addTo(map);
+
+// ======================================
+// グリッド描画
+// ======================================
+
+function drawGrid() {
+
+    gridLayer.clearLayers();
+
+    const bounds = map.getBounds();
+
+    const south = bounds.getSouth();
+    const north = bounds.getNorth();
+    const west = bounds.getWest();
+    const east = bounds.getEast();
+
+    // 横線
+    for (
+        let lat = Math.floor(south / GRID_INTERVAL) * GRID_INTERVAL;
+        lat <= north;
+        lat += GRID_INTERVAL
+    ) {
+
+        L.polyline(
+            [
+                [lat, west],
+                [lat, east]
+            ],
+            {
+                color: "#4da6ff",
+                weight: 1,
+                opacity: 0.8
+            }
+        ).addTo(gridLayer);
+
+    }
+
+    // 縦線
+    for (
+        let lng = Math.floor(west / GRID_INTERVAL) * GRID_INTERVAL;
+        lng <= east;
+        lng += GRID_INTERVAL
+    ) {
+
+        L.polyline(
+            [
+                [south, lng],
+                [north, lng]
+            ],
+            {
+                color: "#4da6ff",
+                weight: 1,
+                opacity: 0.8
+            }
+        ).addTo(gridLayer);
+
+    }
+
+}
+
+// ======================================
+// グリッド選択
+// ======================================
 
 function drawSelectedGrid(lat, lng) {
 
@@ -31,146 +136,55 @@ function drawSelectedGrid(lat, lng) {
 
 }
 
-// ===== グリッド設定 =====
-
-// グリッド間隔（秒）
-const GRID_INTERVAL_SECONDS = 20;
-
-// 度へ変換
-const GRID_INTERVAL = GRID_INTERVAL_SECONDS / 3600;
-
-// 基準（小松空港滑走路中心）
-const GRID_CENTER = {
-    lat: 36.3948,
-    lng: 136.4076
-};
-
-// 中心マス
-const CENTER_ROW = "C";
-const CENTER_COL = 3;
-function getGridIndex(lat, lng) {
-
-    const row = Math.round((GRID_CENTER.lat - lat) / GRID_INTERVAL);
-    const col = Math.round((lng - GRID_CENTER.lng) / GRID_INTERVAL);
-
-    return {
-        row,
-        col
-    };
-
-}
-
-// グリッド基準（小松空港 滑走路中心）
-const GRID_ORIGIN = {
-    lat: 36.3948,
-    lng: 136.4076
-};
-
-// 20秒
-const GRID_INTERVAL = 20 / 3600;
-
-const map = L.map('map').setView([36.3948, 136.4076], 14);
-
-// 国土地理院
-L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
-    attribution: '© 国土地理院',
-    maxZoom: 18
-}).addTo(map);
-
-// グリッドを保存するレイヤー
-const gridLayer = L.layerGroup().addTo(map);
-
-// 20秒（0.008333333°）
-const interval = 20 / 3600;
-
-// グリッド描画
-function drawGrid() {
-
-    // 前回のグリッドを削除
-    gridLayer.clearLayers();
-
-    const bounds = map.getBounds();
-
-    const south = bounds.getSouth();
-    const north = bounds.getNorth();
-    const west = bounds.getWest();
-    const east = bounds.getEast();
-
-    // 横線
-    for (
-        let lat = Math.floor(south / interval) * interval;
-        lat <= north;
-        lat += interval
-    ) {
-
-        L.polyline(
-            [
-                [lat, west],
-                [lat, east]
-            ],
-            {
-                color: "#4da6ff",
-                weight: 1,
-                opacity: 0.8
-            }
-        ).addTo(gridLayer);
-
-    }
-
-    // 縦線
-    for (
-        let lon = Math.floor(west / interval) * interval;
-        lon <= east;
-        lon += interval
-    ) {
-
-        L.polyline(
-            [
-                [south, lon],
-                [north, lon]
-            ],
-            {
-                color: "#4da6ff",
-                weight: 1,
-                opacity: 0.8
-            }
-        ).addTo(gridLayer);
-
-    }
-
-}
-
-// 最初に描画
-drawGrid();
+// ======================================
+// マスID計算（仮版）
+// ======================================
 
 function getGridId(lat, lng) {
 
-    const row = Math.floor((lat - GRID_ORIGIN.lat) / GRID_INTERVAL);
-    const col = Math.floor((lng - GRID_ORIGIN.lng) / GRID_INTERVAL);
+    const row =
+        Math.round((GRID_CENTER.lat - lat) / GRID_INTERVAL);
 
-    const rowLetter = String.fromCharCode(67 - row);
+    const col =
+        Math.round((lng - GRID_CENTER.lng) / GRID_INTERVAL);
 
-    return rowLetter + "-" + (3 + col);
+    const rowLetter =
+        String.fromCharCode(
+            CENTER_ROW.charCodeAt(0) + row
+        );
+
+    const colNumber =
+        CENTER_COL + col;
+
+    return rowLetter + "-" + colNumber;
 
 }
 
-// 地図を動かしたら描き直す
+// ======================================
+// 初期表示
+// ======================================
+
+drawGrid();
+
 map.on("moveend", drawGrid);
 
-// 長押しイベント
+// ======================================
+// 長押し
+// ======================================
+
 map.on("contextmenu", function (e) {
 
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
-    
-drawSelectedGrid(lat, lng);
-    
-const gridId = getGridId(lat, lng);
 
-document.getElementById("info").innerHTML =
-    "<b>Project Kestrel</b><br>" +
-    "Grid : <b>" + gridId + "</b><br><br>" +
-    "Latitude : " + lat.toFixed(6) + "<br>" +
-    "Longitude : " + lng.toFixed(6);
+    drawSelectedGrid(lat, lng);
+
+    const gridId = getGridId(lat, lng);
+
+    document.getElementById("info").innerHTML =
+        "<b>Project Kestrel</b><br>" +
+        "<b>Grid : " + gridId + "</b><br><br>" +
+        "Latitude : " + lat.toFixed(6) + "<br>" +
+        "Longitude : " + lng.toFixed(6);
 
 });
