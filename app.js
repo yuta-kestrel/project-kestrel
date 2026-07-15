@@ -25,8 +25,8 @@ const GRID_COLS = 9;
 
 // ===== 中心マス =====
 
-const CENTER_ROW = "C";
-const CENTER_COL = 3;
+const CENTER_ROW = "E";
+const CENTER_COL = 5;
 
 
 // ===== 小松空港滑走路中心 =====
