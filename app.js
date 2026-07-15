@@ -182,18 +182,6 @@ const east = west + GRID_INTERVAL;
 // ======================================
 
 function getGridId(lat, lng) {
-
-function getGridCenter(lat, lng) {
-
-    const row = Math.floor((lat - GRID_ORIGIN.lat) / GRID_INTERVAL);
-    const col = Math.floor((lng - GRID_ORIGIN.lng) / GRID_INTERVAL);
-
-    return {
-        lat: GRID_ORIGIN.lat + (row + 0.5) * GRID_INTERVAL,
-        lng: GRID_ORIGIN.lng + (col + 0.5) * GRID_INTERVAL
-    };
-
-}
     
     const row =
         Math.round((GRID_CENTER.lat - lat) / GRID_INTERVAL);
@@ -210,6 +198,18 @@ function getGridCenter(lat, lng) {
         CENTER_COL + col;
 
     return rowLetter + "-" + colNumber;
+
+}
+
+function getGridCenter(lat, lng) {
+
+    const row = Math.floor((lat - GRID_ORIGIN.lat) / GRID_INTERVAL);
+    const col = Math.floor((lng - GRID_ORIGIN.lng) / GRID_INTERVAL);
+
+    return {
+        lat: GRID_ORIGIN.lat + (row + 0.5) * GRID_INTERVAL,
+        lng: GRID_ORIGIN.lng + (col + 0.5) * GRID_INTERVAL
+    };
 
 }
 
