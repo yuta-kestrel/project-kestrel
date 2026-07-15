@@ -227,24 +227,21 @@ map.on("moveend", drawGrid);
 
 map.on("contextmenu", function (e) {
 
-    const lat = e.latlng.lat;
-    const lng = e.latlng.lng;
+   const gridId = getGridId(lat, lng);
+const center = getGridCenter(lat, lng);
 
-    drawSelectedGrid(lat, lng);
+document.getElementById("info").innerHTML =
+    "<b>Project Kestrel</b><br><br>" +
 
-    function getGridId(lat, lng) {
+    "<b>Grid :</b> " + gridId + "<br><br>" +
 
-    const row = Math.floor((GRID_CENTER.lat - lat) / GRID_INTERVAL);
-    const col = Math.floor((lng - GRID_CENTER.lng) / GRID_INTERVAL);
+    "<b>Grid Center</b><br>" +
+    center.lat.toFixed(6) + "<br>" +
+    center.lng.toFixed(6) + "<br><br>" +
 
-    const rowLetter = String.fromCharCode(
-        CENTER_ROW.charCodeAt(0) + row
-    );
-
-    const colNumber = CENTER_COL + col;
-
-    return rowLetter + "-" + colNumber;
-
+    "<b>Selected Point</b><br>" +
+    lat.toFixed(6) + "<br>" +
+    lng.toFixed(6); 
     }
 
 
