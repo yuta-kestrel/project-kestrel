@@ -24,3 +24,29 @@ L.polyline([
     color: "#4da6ff",
     weight: 2
 }).addTo(map);
+const interval = 30 / 3600; // 30秒 = 約0.008333度
+
+const bounds = map.getBounds();
+
+const south = bounds.getSouth();
+const north = bounds.getNorth();
+const west = bounds.getWest();
+const east = bounds.getEast();
+
+// 横線
+for (
+    let lat = Math.floor(south / interval) * interval;
+    lat <= north;
+    lat += interval
+) {
+    L.polyline(
+        [
+            [lat, west],
+            [lat, east]
+        ],
+        {
+            color: "#4da6ff",
+            weight: 1
+        }
+    ).addTo(map);
+        }
