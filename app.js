@@ -81,6 +81,17 @@ function drawGrid() {
 // 最初に描画
 drawGrid();
 
+function getGridId(lat, lng) {
+
+    const row = Math.floor((lat - GRID_ORIGIN.lat) / GRID_INTERVAL);
+    const col = Math.floor((lng - GRID_ORIGIN.lng) / GRID_INTERVAL);
+
+    const rowLetter = String.fromCharCode(67 - row);
+
+    return rowLetter + "-" + (3 + col);
+
+}
+
 // 地図を動かしたら描き直す
 map.on("moveend", drawGrid);
 
