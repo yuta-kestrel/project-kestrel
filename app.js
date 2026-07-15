@@ -65,7 +65,7 @@ function drawGrid() {
 
     // 基準から南北方向へ描画
     for (
-        let lat = GRID_CENTER.lat;
+        let lat = GRID_ORIGIN.lat;
         lat <= north;
         lat += GRID_INTERVAL
     ) {
@@ -84,7 +84,7 @@ function drawGrid() {
     }
 
     for (
-        let lat = GRID_CENTER.lat - GRID_INTERVAL;
+        let lat = GRID_ORIGIN.lat - GRID_INTERVAL;
         lat >= south;
         lat -= GRID_INTERVAL
     ) {
@@ -104,7 +104,7 @@ function drawGrid() {
 
     // 基準から東西方向へ描画
     for (
-        let lng = GRID_CENTER.lng;
+        let lng = GRID_ORIGIN.lng;
         lng <= east;
         lng += GRID_INTERVAL
     ) {
@@ -123,7 +123,7 @@ function drawGrid() {
     }
 
     for (
-        let lng = GRID_CENTER.lng - GRID_INTERVAL;
+        let lng = GRID_ORIGIN.lng - GRID_INTERVAL;
         lng >= west;
         lng -= GRID_INTERVAL
     ) {
