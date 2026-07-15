@@ -21,6 +21,13 @@ const GRID_ORIGIN = {
     lat: GRID_CENTER.lat - (GRID_INTERVAL / 2),
     lng: GRID_CENTER.lng - (GRID_INTERVAL / 2)
 };
+// ===== 表示設定 =====
+
+// 行数（A～I）
+const GRID_ROWS = 9;
+
+// 列数（1～9）
+const GRID_COLS = 9;
 
 // 中心マス
 const CENTER_ROW = "C";
