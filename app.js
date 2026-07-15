@@ -4,8 +4,8 @@ const GRID_ORIGIN = {
     lng: 136.4076
 };
 
-// 30秒
-const GRID_INTERVAL = 30 / 3600;
+// 20秒
+const GRID_INTERVAL = 20 / 3600;
 
 const map = L.map('map').setView([36.3948, 136.4076], 14);
 
@@ -18,8 +18,8 @@ L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
 // グリッドを保存するレイヤー
 const gridLayer = L.layerGroup().addTo(map);
 
-// 30秒（0.008333333°）
-const interval = 30 / 3600;
+// 20秒（0.008333333°）
+const interval = 20 / 3600;
 
 // グリッド描画
 function drawGrid() {
