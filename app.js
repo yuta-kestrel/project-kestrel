@@ -67,91 +67,47 @@ function drawGrid() {
 
     gridLayer.clearLayers();
 
-    const bounds = map.getBounds();
+    // C-3 を中心とした左上の座標
+    const startLat = GRID_CENTER.lat + (2 * GRID_INTERVAL);
+    const startLng = GRID_CENTER.lng - (2 * GRID_INTERVAL);
 
-    const south = bounds.getSouth();
-    const north = bounds.getNorth();
-    const west = bounds.getWest();
-    const east = bounds.getEast();
+    // 横線
+    for (let r = 0; r <= GRID_ROWS; r++) {
 
-    // 基準から南北方向へ描画
-    for (
-        let lat = GRID_ORIGIN.lat;
-        lat <= north;
-        lat += GRID_INTERVAL
-    ) {
+        const lat = startLat - r * GRID_INTERVAL;
 
         L.polyline(
             [
-                [lat, west],
-                [lat, east]
+                [lat, startLng],
+                [lat, startLng + GRID_COLS * GRID_INTERVAL]
             ],
             {
                 color: "#4da6ff",
-                weight: 1
+                weight: 1.2
             }
         ).addTo(gridLayer);
 
     }
 
-    for (
-        let lat = GRID_ORIGIN.lat - GRID_INTERVAL;
-        lat >= south;
-        lat -= GRID_INTERVAL
-    ) {
+    // 縦線
+    for (let c = 0; c <= GRID_COLS; c++) {
+
+        const lng = startLng + c * GRID_INTERVAL;
 
         L.polyline(
             [
-                [lat, west],
-                [lat, east]
+                [startLat, lng],
+                [startLat - GRID_ROWS * GRID_INTERVAL, lng]
             ],
             {
                 color: "#4da6ff",
-                weight: 1
+                weight: 1.2
             }
         ).addTo(gridLayer);
 
     }
 
-    // 基準から東西方向へ描画
-    for (
-        let lng = GRID_ORIGIN.lng;
-        lng <= east;
-        lng += GRID_INTERVAL
-    ) {
-
-        L.polyline(
-            [
-                [south, lng],
-                [north, lng]
-            ],
-            {
-                color: "#4da6ff",
-                weight: 1
-            }
-        ).addTo(gridLayer);
-
-    }
-
-    for (
-        let lng = GRID_ORIGIN.lng - GRID_INTERVAL;
-        lng >= west;
-        lng -= GRID_INTERVAL
-    ) {
-
-        L.polyline(
-            [
-                [south, lng],
-                [north, lng]
-            ],
-            {
-                color: "#4da6ff",
-                weight: 1
-            }
-        ).addTo(gridLayer);
-
-    }
-
+}
 }
 
 // ======================================
