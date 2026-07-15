@@ -16,6 +16,11 @@ const GRID_CENTER = {
     lat: 36.3948,
     lng: 136.4076
 };
+// C-3の左下座標
+const GRID_ORIGIN = {
+    lat: GRID_CENTER.lat - (GRID_INTERVAL / 2),
+    lng: GRID_CENTER.lng - (GRID_INTERVAL / 2)
+};
 
 // 中心マス
 const CENTER_ROW = "C";
