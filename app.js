@@ -100,10 +100,13 @@ map.on("contextmenu", function (e) {
 
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
+    
+const gridId = getGridId(lat, lng);
 
-    document.getElementById("info").innerHTML =
-        "<b>Project Kestrel</b><br>" +
-        "Latitude : " + lat.toFixed(6) + "<br>" +
-        "Longitude : " + lng.toFixed(6);
+document.getElementById("info").innerHTML =
+    "<b>Project Kestrel</b><br>" +
+    "Grid : <b>" + gridId + "</b><br><br>" +
+    "Latitude : " + lat.toFixed(6) + "<br>" +
+    "Longitude : " + lng.toFixed(6);
 
 });
