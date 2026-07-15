@@ -1,3 +1,12 @@
+// グリッド基準（小松空港 滑走路中心）
+const GRID_ORIGIN = {
+    lat: 36.3948,
+    lng: 136.4076
+};
+
+// 30秒
+const GRID_INTERVAL = 30 / 3600;
+
 const map = L.map('map').setView([36.3948, 136.4076], 14);
 
 // 国土地理院
