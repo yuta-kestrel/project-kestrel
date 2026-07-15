@@ -163,6 +163,8 @@ map.on("contextmenu", function (e) {
     const lat = e.latlng.lat;
     const lng = e.latlng.lng;
     
+drawSelectedGrid(lat, lng);
+    
 const gridId = getGridId(lat, lng);
 
 document.getElementById("info").innerHTML =
