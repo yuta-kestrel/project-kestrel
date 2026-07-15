@@ -4,25 +4,23 @@ L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
     attribution: '© 国土地理院',
     maxZoom: 18
 }).addTo(map);
-// テスト用グリッド
-const bounds = [
-    [36.385, 136.395],
-    [36.405, 136.415]
-];
 
-L.rectangle(bounds, {
+// テスト用グリッドライン
+
+// 横線
+L.polyline([
+    [36.395, 136.39],
+    [36.395, 136.43]
+], {
     color: "#4da6ff",
-    weight: 2,
-    fill: false
+    weight: 2
 }).addTo(map);
 
-const bounds = [
-    [36.37, 136.39],
-    [36.42, 136.43]
-];
-
-L.rectangle(bounds, {
-    color: "red",
-    weight: 5,
-    fill: false
+// 縦線
+L.polyline([
+    [36.37, 136.41],
+    [36.42, 136.41]
+], {
+    color: "#4da6ff",
+    weight: 2
 }).addTo(map);
