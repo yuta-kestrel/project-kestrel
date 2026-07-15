@@ -220,12 +220,24 @@ map.on("contextmenu", function (e) {
 
     drawSelectedGrid(lat, lng);
 
-    const gridId = getGridId(lat, lng);
+    function getGridId(lat, lng) {
 
-    document.getElementById("info").innerHTML =
-        "<b>Project Kestrel</b><br>" +
-        "<b>Grid : " + gridId + "</b><br><br>" +
-        "Latitude : " + lat.toFixed(6) + "<br>" +
-        "Longitude : " + lng.toFixed(6);
+    const row = Math.floor((GRID_CENTER.lat - lat) / GRID_INTERVAL);
+    const col = Math.floor((lng - GRID_CENTER.lng) / GRID_INTERVAL);
 
+    const rowLetter = String.fromCharCode(
+        CENTER_ROW.charCodeAt(0) + row
+    );
+
+    const colNumber = CENTER_COL + col;
+
+    return rowLetter + "-" + colNumber;
+
+    }
+
+
+
+
+
+    
 });
