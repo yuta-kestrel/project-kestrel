@@ -153,14 +153,14 @@ function drawSelectedGrid(lat, lng) {
         map.removeLayer(selectedGrid);
     }
 
-    const south =
-        Math.floor(lat / GRID_INTERVAL) * GRID_INTERVAL;
+    const row = Math.floor((lat - GRID_ORIGIN.lat) / GRID_INTERVAL);
+const col = Math.floor((lng - GRID_ORIGIN.lng) / GRID_INTERVAL);
 
-    const west =
-        Math.floor(lng / GRID_INTERVAL) * GRID_INTERVAL;
+const south = GRID_ORIGIN.lat + row * GRID_INTERVAL;
+const west = GRID_ORIGIN.lng + col * GRID_INTERVAL;
 
-    const north = south + GRID_INTERVAL;
-    const east = west + GRID_INTERVAL;
+const north = south + GRID_INTERVAL;
+const east = west + GRID_INTERVAL;
 
     selectedGrid = L.rectangle(
         [
