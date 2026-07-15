@@ -15,6 +15,18 @@ const GRID_CENTER = {
 // 中心マス
 const CENTER_ROW = "C";
 const CENTER_COL = 3;
+function getGridIndex(lat, lng) {
+
+    const row = Math.round((GRID_CENTER.lat - lat) / GRID_INTERVAL);
+    const col = Math.round((lng - GRID_CENTER.lng) / GRID_INTERVAL);
+
+    return {
+        row,
+        col
+    };
+
+}
+
 // グリッド基準（小松空港 滑走路中心）
 const GRID_ORIGIN = {
     lat: 36.3948,
