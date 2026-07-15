@@ -29,6 +29,10 @@ const CENTER_COL = 3;
 // 選択中グリッド
 let selectedGrid = null;
 
+// 表示マス数
+const GRID_ROWS = 9;   // A～I
+const GRID_COLS = 9;   // 1～9
+
 // ===== 地図 =====
 
 const map = L.map("map").setView(
