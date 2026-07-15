@@ -15,3 +15,14 @@ L.rectangle(bounds, {
     weight: 2,
     fill: false
 }).addTo(map);
+
+const bounds = [
+    [36.37, 136.39],
+    [36.42, 136.43]
+];
+
+L.rectangle(bounds, {
+    color: "red",
+    weight: 5,
+    fill: false
+}).addTo(map);
