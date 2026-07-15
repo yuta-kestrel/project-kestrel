@@ -1,6 +1,36 @@
 // 選択中のマス
 let selectedGrid = null;
 
+function drawSelectedGrid(lat, lng) {
+
+    if (selectedGrid) {
+        map.removeLayer(selectedGrid);
+    }
+
+    const south =
+        Math.floor(lat / GRID_INTERVAL) * GRID_INTERVAL;
+
+    const west =
+        Math.floor(lng / GRID_INTERVAL) * GRID_INTERVAL;
+
+    const north = south + GRID_INTERVAL;
+    const east = west + GRID_INTERVAL;
+
+    selectedGrid = L.rectangle(
+        [
+            [south, west],
+            [north, east]
+        ],
+        {
+            color: "#0066ff",
+            weight: 2,
+            fillColor: "#66b3ff",
+            fillOpacity: 0.35
+        }
+    ).addTo(map);
+
+}
+
 // ===== グリッド設定 =====
 
 // グリッド間隔（秒）
