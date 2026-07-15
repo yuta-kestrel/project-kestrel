@@ -58,9 +58,9 @@ function drawGrid() {
     const west = bounds.getWest();
     const east = bounds.getEast();
 
-    // 横線
+    // 基準から南北方向へ描画
     for (
-        let lat = Math.floor(south / GRID_INTERVAL) * GRID_INTERVAL;
+        let lat = GRID_CENTER.lat;
         lat <= north;
         lat += GRID_INTERVAL
     ) {
@@ -72,16 +72,34 @@ function drawGrid() {
             ],
             {
                 color: "#4da6ff",
-                weight: 1,
-                opacity: 0.8
+                weight: 1
             }
         ).addTo(gridLayer);
 
     }
 
-    // 縦線
     for (
-        let lng = Math.floor(west / GRID_INTERVAL) * GRID_INTERVAL;
+        let lat = GRID_CENTER.lat - GRID_INTERVAL;
+        lat >= south;
+        lat -= GRID_INTERVAL
+    ) {
+
+        L.polyline(
+            [
+                [lat, west],
+                [lat, east]
+            ],
+            {
+                color: "#4da6ff",
+                weight: 1
+            }
+        ).addTo(gridLayer);
+
+    }
+
+    // 基準から東西方向へ描画
+    for (
+        let lng = GRID_CENTER.lng;
         lng <= east;
         lng += GRID_INTERVAL
     ) {
@@ -93,8 +111,26 @@ function drawGrid() {
             ],
             {
                 color: "#4da6ff",
-                weight: 1,
-                opacity: 0.8
+                weight: 1
+            }
+        ).addTo(gridLayer);
+
+    }
+
+    for (
+        let lng = GRID_CENTER.lng - GRID_INTERVAL;
+        lng >= west;
+        lng -= GRID_INTERVAL
+    ) {
+
+        L.polyline(
+            [
+                [south, lng],
+                [north, lng]
+            ],
+            {
+                color: "#4da6ff",
+                weight: 1
             }
         ).addTo(gridLayer);
 
