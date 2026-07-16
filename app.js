@@ -152,41 +152,35 @@ maxZoom:18
 
 
 
-
 // ================================
 // 小型無人機等飛行禁止区域
 // 警察庁
-// 常時表示
+// レッド・イエローゾーン
 // ================================
-
 
 droneLayer = L.tileLayer(
 
-"https://cyberjapandata.gsi.go.jp/xyz/uav/{z}/{x}/{y}.png",
+    "https://cyberjapandata.gsi.go.jp/xyz/drone_rz_yz/{z}/{x}/{y}.png",
 
-{
+    {
 
-pane:"dronePane",
+        pane:"dronePane",
 
-opacity:0.55,
+        opacity:0.55,
 
-maxZoom:18,
+        maxZoom:18,
 
+        attribution:
+        "小型無人機等飛行禁止法（警察庁）"
 
-attribution:
-
-"小型無人機等飛行禁止法（警察庁）"
-
-}
+    }
 
 );
 
 
+// 常時表示
 
 droneLayer.addTo(map);
-
-
-
 
 // ================================
 // 自作レイヤー
