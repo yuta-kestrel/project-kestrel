@@ -1,32 +1,73 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Kestrel</title>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Project Kestrel</title>
+
+
+<!-- Leaflet CSS -->
+
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet/dist/leaflet.css"
+/>
+
+
+<!-- 自分のCSS -->
+
+<link
+rel="stylesheet"
+href="style.css"
+/>
+
+
 </head>
+
 
 <body>
 
-<header>
-    <h1>Project Kestrel</h1>
-    <p>Grid System Project</p>
-</header>
 
-    <main>
-    <div id="map"></div>
+<!-- 地図 -->
 
-    <div id="info">
-        <b>Project Kestrel</b><br>
-        長押ししてください
-    </div>
-    </main>
+<div id="map"></div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="app.js"></script>    
+
+
+<!-- 情報表示 -->
+
+<div id="info">
+
+<b>Project Kestrel</b><br>
+
+長押しで位置選択
+
+</div>
+
+
+
+<!-- Leaflet JS -->
+
+<script
+src="https://unpkg.com/leaflet/dist/leaflet.js">
+</script>
+
+
+
+<!-- 自分のJS -->
+
+<script
+src="app.js">
+</script>
+
+
 
 </body>
+
+
 </html>
