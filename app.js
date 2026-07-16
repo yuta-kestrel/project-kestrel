@@ -2,30 +2,30 @@
 // Project Kestrel
 // Ver.1.0β
 // E-5 Center Version
-// Part1
+// app.js
 // ======================================
+
 
 
 // ================================
 // グリッド設定
 // ================================
 
-// 20秒グリッド
 const GRID_INTERVAL_SECONDS = 20;
 
 const GRID_INTERVAL =
     GRID_INTERVAL_SECONDS / 3600;
 
 
+
 // ================================
 // 表示範囲
 // ================================
 
-// A〜I
 const GRID_ROWS = 9;
 
-// 1〜9
 const GRID_COLS = 9;
+
 
 
 // ================================
@@ -35,7 +35,9 @@ const GRID_COLS = 9;
 // 小松空港滑走路中心 = E-5
 
 const CENTER_ROW = "E";
+
 const CENTER_COL = 5;
+
 
 
 // ================================
@@ -44,24 +46,65 @@ const CENTER_COL = 5;
 
 const GRID_CENTER = {
 
-    lat: 36.394800,
+    lat:36.394800,
 
-    lng: 136.407600
+    lng:136.407600
 
 };
+
 
 
 // ================================
 // レイヤー
 // ================================
 
+let droneLayer;
+
 let gridLayer;
 
 let labelLayer;
 
+
 let selectedGrid = null;
 
 let crossMarker = null;
+
+
+
+// ================================
+// Leaflet Pane設定
+// ================================
+
+
+// 飛行禁止区域
+
+map.createPane("dronePane");
+
+map.getPane("dronePane").style.zIndex = 350;
+
+
+// グリッド
+
+map.createPane("gridPane");
+
+map.getPane("gridPane").style.zIndex = 450;
+
+
+// ラベル
+
+map.createPane("labelPane");
+
+map.getPane("labelPane").style.zIndex = 500;
+
+
+// マーカー
+
+map.createPane("markerPane");
+
+map.getPane("markerPane").style.zIndex = 600;
+
+
+
 
 
 // ================================
@@ -69,46 +112,107 @@ let crossMarker = null;
 // ================================
 
 const map = L.map("map")
-    .setView(
 
-        [
-            GRID_CENTER.lat,
-            GRID_CENTER.lng
-        ],
+.setView(
 
-        14
+    [
 
-    );
+        GRID_CENTER.lat,
+
+        GRID_CENTER.lng
+
+    ],
+
+    14
+
+);
 
 
-// 国土地理院
+
+
+
+// ================================
+// 国土地理院 標準地図
+// ================================
+
 
 L.tileLayer(
 
     "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
 
-    {
+{
 
-        attribution:
-        "© 国土地理院",
+    attribution:
+    "© 国土地理院",
 
-        maxZoom:18
+    maxZoom:18
 
-    }
+}
 
-).addTo(map);
+)
 
-
-// レイヤー
-
-gridLayer =
-    L.layerGroup()
-    .addTo(map);
+.addTo(map);
 
 
-labelLayer =
-    L.layerGroup()
-    .addTo(map);
+
+
+
+
+// ================================
+// 小型無人機等飛行禁止区域
+// 警察庁
+// 常時表示
+// ================================
+
+
+droneLayer = L.tileLayer(
+
+    "https://cyberjapandata.gsi.go.jp/xyz/uav/{z}/{x}/{y}.png",
+
+{
+
+    pane:"dronePane",
+
+    opacity:0.55,
+
+    maxZoom:18,
+
+
+    attribution:
+    "小型無人機等飛行禁止法（警察庁）"
+
+
+}
+
+);
+
+
+droneLayer.addTo(map);
+
+
+
+
+
+
+// ================================
+// 自作レイヤー
+// ================================
+
+
+gridLayer = L.layerGroup();
+
+gridLayer.addTo(map);
+
+
+
+labelLayer = L.layerGroup();
+
+labelLayer.addTo(map);
+
+
+
+
+
 
 
 
@@ -116,254 +220,313 @@ labelLayer =
 // グリッド描画
 // ================================
 
+
 function drawGrid(){
 
 
-    gridLayer.clearLayers();
+gridLayer.clearLayers();
 
-    labelLayer.clearLayers();
+labelLayer.clearLayers();
 
 
 
-    // E-5を中心に左上位置を計算
 
+const centerRowIndex =
+CENTER_ROW.charCodeAt(0)-65;
 
-    const centerRowIndex =
-        CENTER_ROW.charCodeAt(0) - 65;
 
 
-    const startLat =
-        GRID_CENTER.lat
-        + centerRowIndex * GRID_INTERVAL;
+const startLat =
+GRID_CENTER.lat
++
+centerRowIndex
+*
+GRID_INTERVAL;
 
 
-    const startLng =
-        GRID_CENTER.lng
-        - (CENTER_COL - 1) * GRID_INTERVAL;
 
+const startLng =
+GRID_CENTER.lng
+-
+(CENTER_COL-1)
+*
+GRID_INTERVAL;
 
 
-    // 横線
 
-    for(
-        let r = 0;
-        r <= GRID_ROWS;
-        r++
-    ){
 
-        const lat =
-            startLat
-            - r * GRID_INTERVAL;
 
+// 横線
 
-        L.polyline(
+for(
+let r=0;
+r<=GRID_ROWS;
+r++
+){
 
-            [
 
-                [
-                    lat,
-                    startLng
-                ],
+const lat =
+startLat
+-
+r*GRID_INTERVAL;
 
-                [
-                    lat,
-                    startLng
-                    + GRID_COLS
-                    * GRID_INTERVAL
-                ]
 
-            ],
 
-            {
+L.polyline(
 
-                color:"#4da6ff",
+[
 
-                weight:1.2
+[lat,startLng],
 
-            }
+[
+lat,
+startLng+
+GRID_COLS*
+GRID_INTERVAL
+]
 
-        ).addTo(gridLayer);
+],
 
-    }
+{
 
+color:"#4da6ff",
 
+weight:1.2,
 
-    // 縦線
+pane:"gridPane"
 
-    for(
-        let c = 0;
-        c <= GRID_COLS;
-        c++
-    ){
+}
 
-        const lng =
-            startLng
-            + c * GRID_INTERVAL;
+)
 
-
-
-        L.polyline(
-
-            [
-
-                [
-                    startLat,
-                    lng
-                ],
-
-                [
-                    startLat
-                    - GRID_ROWS
-                    * GRID_INTERVAL,
-
-                    lng
-                ]
-
-            ],
-
-            {
-
-                color:"#4da6ff",
-
-                weight:1.2
-
-            }
-
-        ).addTo(gridLayer);
-
-    }
-
-
-
-    // 上側数字
-
-    for(
-        let c=0;
-        c<GRID_COLS;
-        c++
-    ){
-
-        addLabel(
-
-            startLat
-            + GRID_INTERVAL*0.25,
-
-            startLng
-            +(c+0.5)
-            *GRID_INTERVAL,
-
-            c+1
-
-        );
-
-    }
-
-
-
-    // 左側アルファベット
-
-    for(
-        let r=0;
-        r<GRID_ROWS;
-        r++
-    ){
-
-        addLabel(
-
-            startLat
-            -(r+0.5)
-            *GRID_INTERVAL,
-
-            startLng
-            -GRID_INTERVAL*0.25,
-
-            String.fromCharCode(
-                65+r
-            )
-
-        );
-
-    }
+.addTo(gridLayer);
 
 
 }
 
 
 
-// ラベル追加
+
+
+
+// 縦線
+
+for(
+let c=0;
+c<=GRID_COLS;
+c++
+){
+
+
+
+const lng =
+startLng+
+c*
+GRID_INTERVAL;
+
+
+
+
+L.polyline(
+
+[
+
+[
+startLat,
+lng
+],
+
+[
+startLat-
+GRID_ROWS*
+GRID_INTERVAL,
+
+lng
+]
+
+],
+
+{
+
+color:"#4da6ff",
+
+weight:1.2,
+
+pane:"gridPane"
+
+}
+
+)
+
+.addTo(gridLayer);
+
+
+
+}
+
+
+
+
+
+
+
+// 数字
+
+for(
+let c=0;
+c<GRID_COLS;
+c++
+){
+
+
+addLabel(
+
+startLat+
+GRID_INTERVAL*0.25,
+
+startLng+
+(c+0.5)
+*
+GRID_INTERVAL,
+
+c+1
+
+);
+
+
+}
+
+
+
+
+
+
+// アルファベット
+
+for(
+let r=0;
+r<GRID_ROWS;
+r++
+){
+
+
+addLabel(
+
+startLat-
+(r+0.5)
+*
+GRID_INTERVAL,
+
+startLng-
+GRID_INTERVAL*0.25,
+
+String.fromCharCode(
+65+r
+)
+
+);
+
+
+}
+
+
+}
+
+
+
+
+
+
+// ================================
+// ラベル
+// ================================
+
 
 function addLabel(lat,lng,text){
 
 
-    L.marker(
+L.marker(
 
-        [
-            lat,
-            lng
-        ],
+[lat,lng],
 
-        {
+{
 
-            interactive:false,
+pane:"labelPane",
 
-            icon:L.divIcon({
+interactive:false,
 
-                className:
-                "grid-label",
 
-                html:
-                "<b>"+text+"</b>"
+icon:L.divIcon({
 
-            })
+className:"grid-label",
 
-        }
+html:
+"<b>"+text+"</b>"
 
-    ).addTo(labelLayer);
+})
 
-        }
-// ======================================
-// Part2
-// グリッド計算・選択処理
-// ======================================
+
+}
+
+)
+
+.addTo(labelLayer);
+
+
+}
+
+
+
+
+
 
 
 
 // ================================
-// マスID取得
+// Grid ID
 // ================================
+
 
 function getGridId(lat,lng){
 
 
-    const row =
-        Math.floor(
-            (GRID_CENTER.lat - lat)
-            / GRID_INTERVAL
-        );
+const row =
+Math.floor(
 
+(GRID_CENTER.lat-lat)
+/GRID_INTERVAL
 
-    const col =
-        Math.floor(
-            (lng - GRID_CENTER.lng)
-            / GRID_INTERVAL
-        );
+);
 
 
 
-    const rowLetter =
-        String.fromCharCode(
-            CENTER_ROW.charCodeAt(0)
-            + row
-        );
+const col =
+Math.floor(
+
+(lng-GRID_CENTER.lng)
+/GRID_INTERVAL
+
+);
 
 
 
-    const colNumber =
-        CENTER_COL + col;
+return (
 
+String.fromCharCode(
+CENTER_ROW.charCodeAt(0)+row
+)
 
++
 
-    return rowLetter + "-" + colNumber;
+"-"
+
++
+
+(
+CENTER_COL+col
+)
+
+);
 
 
 }
@@ -371,45 +534,59 @@ function getGridId(lat,lng){
 
 
 
+
+
+
 // ================================
-// マス中心座標取得
+// マス中心
 // ================================
+
 
 function getGridCenter(lat,lng){
 
 
-    const row =
-        Math.floor(
-            (GRID_CENTER.lat - lat)
-            / GRID_INTERVAL
-        );
+const row =
+Math.floor(
 
+(GRID_CENTER.lat-lat)
+/GRID_INTERVAL
 
-    const col =
-        Math.floor(
-            (lng - GRID_CENTER.lng)
-            / GRID_INTERVAL
-        );
+);
 
 
 
-    return {
+const col =
+Math.floor(
+
+(lng-GRID_CENTER.lng)
+/GRID_INTERVAL
+
+);
 
 
-        lat:
-            GRID_CENTER.lat
-            - (row + 0.5)
-            * GRID_INTERVAL,
+
+
+return {
+
+
+lat:
+GRID_CENTER.lat
+-
+(row+0.5)
+*
+GRID_INTERVAL,
 
 
 
-        lng:
-            GRID_CENTER.lng
-            + (col + 0.5)
-            * GRID_INTERVAL
+lng:
+GRID_CENTER.lng
++
+(col+0.5)
+*
+GRID_INTERVAL
 
 
-    };
+};
 
 
 }
@@ -417,78 +594,63 @@ function getGridCenter(lat,lng){
 
 
 
+
+
+
 // ================================
-// 選択マス表示
+// 選択マス
 // ================================
+
 
 function drawSelectedGrid(lat,lng){
 
 
-    if(selectedGrid){
+if(selectedGrid){
 
-        map.removeLayer(selectedGrid);
+map.removeLayer(selectedGrid);
 
-    }
-
-
-
-    const center =
-        getGridCenter(lat,lng);
+}
 
 
 
-    const south =
-        center.lat
-        - GRID_INTERVAL/2;
-
-
-    const north =
-        center.lat
-        + GRID_INTERVAL/2;
-
-
-    const west =
-        center.lng
-        - GRID_INTERVAL/2;
-
-
-    const east =
-        center.lng
-        + GRID_INTERVAL/2;
+const center =
+getGridCenter(lat,lng);
 
 
 
-    selectedGrid =
-        L.rectangle(
+selectedGrid =
+L.rectangle(
 
-            [
+[
 
-                [
-                    south,
-                    west
-                ],
+[
+center.lat-GRID_INTERVAL/2,
+center.lng-GRID_INTERVAL/2
+],
 
-                [
-                    north,
-                    east
-                ]
+[
+center.lat+GRID_INTERVAL/2,
+center.lng+GRID_INTERVAL/2
+]
 
-            ],
+],
 
-            {
+{
 
-                color:"#0066ff",
+color:"#0066ff",
 
-                weight:3,
+weight:3,
 
-                fillColor:"#66b3ff",
+fillColor:"#66b3ff",
 
-                fillOpacity:0.35
+fillOpacity:0.35
 
-            }
+}
 
-        )
-        .addTo(map);
+)
+
+.addTo(map);
+
 
 
 }
@@ -496,60 +658,64 @@ function drawSelectedGrid(lat,lng){
 
 
 
+
+
+
 // ================================
-// 長押し位置 十字表示
+// 十字表示
 // ================================
+
 
 function drawCross(lat,lng){
 
 
+if(crossMarker){
 
-    if(crossMarker){
+map.removeLayer(crossMarker);
 
-        map.removeLayer(crossMarker);
-
-    }
-
-
-
-    const crossIcon =
-        L.divIcon({
-
-            className:"cross-marker",
-
-            html:"✚",
-
-            iconSize:[
-                30,
-                30
-            ]
-
-        });
+}
 
 
 
-    crossMarker =
-        L.marker(
+crossMarker =
 
-            [
-                lat,
-                lng
-            ],
+L.marker(
 
-            {
+[lat,lng],
 
-                icon:crossIcon,
+{
 
-                interactive:false
+pane:"markerPane",
 
-            }
+interactive:false,
 
-        )
-        .addTo(map);
+
+icon:L.divIcon({
+
+className:"cross-marker",
+
+html:"✚",
+
+iconSize:[
+30,
+30
+]
+
+})
+
+
+}
+
+)
+
+.addTo(map);
 
 
 
 }
+
+
+
 
 
 
@@ -558,120 +724,129 @@ function drawCross(lat,lng){
 // 初期表示
 // ================================
 
+
 drawGrid();
 
 
 
-// 地図移動時
+
+
+
+// ================================
+// 地図移動
+// ================================
+
 
 map.on(
 
-    "moveend",
+"moveend",
 
-    function(){
+function(){
 
-        drawGrid();
+drawGrid();
 
-    }
+}
 
 );
 
 
 
 
+
+
+
+
 // ================================
-// 長押しイベント
+// 長押し
 // ================================
+
 
 map.on(
 
-    "contextmenu",
+"contextmenu",
 
-    function(e){
-
-
-
-        const lat =
-            e.latlng.lat;
-
-
-        const lng =
-            e.latlng.lng;
+function(e){
 
 
 
-        // 青マス
-
-        drawSelectedGrid(
-            lat,
-            lng
-        );
+const lat =
+e.latlng.lat;
 
 
-
-        // 十字
-
-        drawCross(
-            lat,
-            lng
-        );
+const lng =
+e.latlng.lng;
 
 
 
-        const gridId =
-            getGridId(
-                lat,
-                lng
-            );
+
+drawSelectedGrid(
+lat,
+lng
+);
 
 
 
-        const center =
-            getGridCenter(
-                lat,
-                lng
-            );
+drawCross(
+lat,
+lng
+);
 
 
 
-        document
-        .getElementById("info")
-        .innerHTML =
 
 
-        "<b>Project Kestrel</b><br><br>" +
-
-
-        "<b>Grid ID</b><br>" +
-
-        gridId +
-
-        "<br><br>" +
+const gridId =
+getGridId(
+lat,
+lng
+);
 
 
 
-        "<b>Grid Center</b><br>" +
 
-        center.lat.toFixed(6) +
 
-        "<br>" +
-
-        center.lng.toFixed(6) +
-
-        "<br><br>" +
+const center =
+getGridCenter(
+lat,
+lng
+);
 
 
 
-        "<b>Selected Point</b><br>" +
 
-        lat.toFixed(6) +
 
-        "<br>" +
-
-        lng.toFixed(6);
+document
+.getElementById("info")
+.innerHTML =
 
 
 
-    }
+"<b>Project Kestrel</b><br><br>"+
+
+
+"<b>Grid ID</b><br>"+
+gridId+
+
+
+"<br><br>"+
+
+
+"<b>Grid Center</b><br>"+
+center.lat.toFixed(6)+
+"<br>"+
+center.lng.toFixed(6)+
+
+
+"<br><br>"+
+
+
+"<b>Selected Point</b><br>"+
+lat.toFixed(6)+
+"<br>"+
+lng.toFixed(6);
+
+
+
+}
 
 );
