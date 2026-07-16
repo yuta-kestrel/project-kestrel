@@ -321,3 +321,357 @@ function addLabel(lat,lng,text){
     ).addTo(labelLayer);
 
         }
+// ======================================
+// Part2
+// グリッド計算・選択処理
+// ======================================
+
+
+
+// ================================
+// マスID取得
+// ================================
+
+function getGridId(lat,lng){
+
+
+    const row =
+        Math.floor(
+            (GRID_CENTER.lat - lat)
+            / GRID_INTERVAL
+        );
+
+
+    const col =
+        Math.floor(
+            (lng - GRID_CENTER.lng)
+            / GRID_INTERVAL
+        );
+
+
+
+    const rowLetter =
+        String.fromCharCode(
+            CENTER_ROW.charCodeAt(0)
+            + row
+        );
+
+
+
+    const colNumber =
+        CENTER_COL + col;
+
+
+
+    return rowLetter + "-" + colNumber;
+
+
+}
+
+
+
+
+// ================================
+// マス中心座標取得
+// ================================
+
+function getGridCenter(lat,lng){
+
+
+    const row =
+        Math.floor(
+            (GRID_CENTER.lat - lat)
+            / GRID_INTERVAL
+        );
+
+
+    const col =
+        Math.floor(
+            (lng - GRID_CENTER.lng)
+            / GRID_INTERVAL
+        );
+
+
+
+    return {
+
+
+        lat:
+            GRID_CENTER.lat
+            - (row + 0.5)
+            * GRID_INTERVAL,
+
+
+
+        lng:
+            GRID_CENTER.lng
+            + (col + 0.5)
+            * GRID_INTERVAL
+
+
+    };
+
+
+}
+
+
+
+
+// ================================
+// 選択マス表示
+// ================================
+
+function drawSelectedGrid(lat,lng){
+
+
+    if(selectedGrid){
+
+        map.removeLayer(selectedGrid);
+
+    }
+
+
+
+    const center =
+        getGridCenter(lat,lng);
+
+
+
+    const south =
+        center.lat
+        - GRID_INTERVAL/2;
+
+
+    const north =
+        center.lat
+        + GRID_INTERVAL/2;
+
+
+    const west =
+        center.lng
+        - GRID_INTERVAL/2;
+
+
+    const east =
+        center.lng
+        + GRID_INTERVAL/2;
+
+
+
+    selectedGrid =
+        L.rectangle(
+
+            [
+
+                [
+                    south,
+                    west
+                ],
+
+                [
+                    north,
+                    east
+                ]
+
+            ],
+
+            {
+
+                color:"#0066ff",
+
+                weight:3,
+
+                fillColor:"#66b3ff",
+
+                fillOpacity:0.35
+
+            }
+
+        )
+        .addTo(map);
+
+
+}
+
+
+
+
+// ================================
+// 長押し位置 十字表示
+// ================================
+
+function drawCross(lat,lng){
+
+
+
+    if(crossMarker){
+
+        map.removeLayer(crossMarker);
+
+    }
+
+
+
+    const crossIcon =
+        L.divIcon({
+
+            className:"cross-marker",
+
+            html:"✚",
+
+            iconSize:[
+                30,
+                30
+            ]
+
+        });
+
+
+
+    crossMarker =
+        L.marker(
+
+            [
+                lat,
+                lng
+            ],
+
+            {
+
+                icon:crossIcon,
+
+                interactive:false
+
+            }
+
+        )
+        .addTo(map);
+
+
+
+}
+
+
+
+
+// ================================
+// 初期表示
+// ================================
+
+drawGrid();
+
+
+
+// 地図移動時
+
+map.on(
+
+    "moveend",
+
+    function(){
+
+        drawGrid();
+
+    }
+
+);
+
+
+
+
+// ================================
+// 長押しイベント
+// ================================
+
+map.on(
+
+    "contextmenu",
+
+    function(e){
+
+
+
+        const lat =
+            e.latlng.lat;
+
+
+        const lng =
+            e.latlng.lng;
+
+
+
+        // 青マス
+
+        drawSelectedGrid(
+            lat,
+            lng
+        );
+
+
+
+        // 十字
+
+        drawCross(
+            lat,
+            lng
+        );
+
+
+
+        const gridId =
+            getGridId(
+                lat,
+                lng
+            );
+
+
+
+        const center =
+            getGridCenter(
+                lat,
+                lng
+            );
+
+
+
+        document
+        .getElementById("info")
+        .innerHTML =
+
+
+        "<b>Project Kestrel</b><br><br>" +
+
+
+        "<b>Grid ID</b><br>" +
+
+        gridId +
+
+        "<br><br>" +
+
+
+
+        "<b>Grid Center</b><br>" +
+
+        center.lat.toFixed(6) +
+
+        "<br>" +
+
+        center.lng.toFixed(6) +
+
+        "<br><br>" +
+
+
+
+        "<b>Selected Point</b><br>" +
+
+        lat.toFixed(6) +
+
+        "<br>" +
+
+        lng.toFixed(6);
+
+
+
+    }
+
+);
